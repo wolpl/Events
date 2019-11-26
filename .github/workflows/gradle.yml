@@ -2,7 +2,7 @@ name: Package Publish
 
 on:
   push:
-    branches: 
+    branches:
       - master
 
 jobs:
@@ -21,4 +21,5 @@ jobs:
     - name: Publish package
       env:
         PASSWORD: ${{ secrets.GITHUB_TOKEN }}
+        USERNAME: wolpl
       run: ./gradlew publish
