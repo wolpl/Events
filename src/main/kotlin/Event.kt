@@ -1,8 +1,8 @@
 package com.github.wolpl.events
 
+import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlin.coroutines.Continuation
 import kotlin.coroutines.resume
-import kotlin.coroutines.suspendCoroutine
 
 class Event<T> {
     private val listeners = mutableListOf<(T) -> Unit>()
@@ -55,7 +55,7 @@ class Event<T> {
      * Suspends the current coroutine until the event fires.
      * @since 1.2
      */
-    suspend fun awaitFire() = suspendCoroutine<T> {
+    suspend fun awaitFire() = suspendCancellableCoroutine<T> {
         continuations.add(it)
     }
 }
