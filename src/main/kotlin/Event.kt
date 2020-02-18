@@ -1,7 +1,12 @@
 package com.github.wolpl.events
 
+import kotlin.coroutines.Continuation
+import kotlin.coroutines.resume
+import kotlin.coroutines.suspendCoroutine
+
 class Event<T> {
     private val listeners = mutableListOf<(T) -> Unit>()
+    private val continuations = mutableListOf<Continuation<T>>()
 
     /**
      * Registers a listener to be notified when the event fires.
@@ -41,6 +46,17 @@ class Event<T> {
      */
     operator fun invoke(data: T) {
         listeners.forEach { it(data) }
+        val continuationsCopy = continuations.toTypedArray()
+        continuations.clear()
+        continuationsCopy.forEach { it.resume(data) }
+    }
+
+    /**
+     * Suspends the current coroutine until the event fires.
+     * @since 1.2
+     */
+    suspend fun awaitFire() = suspendCoroutine<T> {
+        continuations.add(it)
     }
 }
 
