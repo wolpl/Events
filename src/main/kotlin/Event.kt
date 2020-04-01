@@ -45,10 +45,12 @@ class Event<T> {
      * @since 1.0
      */
     operator fun invoke(data: T) {
-        listeners.forEach { it(data) }
-        val continuationsCopy = continuations.toTypedArray()
+        val continuationsCopy = mutableListOf<Continuation<T>>()
+        continuationsCopy.addAll(continuations)
         continuations.clear()
-        continuationsCopy.forEach { it.resume(data) }
+
+        continuationsCopy.filterNotNull().forEach { it.resume(data) }
+        listeners.forEach { it(data) }
     }
 
     /**
